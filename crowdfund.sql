@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Generation Time: Feb 13, 2024 at 06:27 PM
+-- Generation Time: Feb 23, 2024 at 08:39 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -29,12 +29,13 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `backing` (
   `Backing ID` int(11) NOT NULL,
-  `Campaign Id` int(11) NOT NULL,
-  `User Id` int(11) NOT NULL,
-  `Amount Pledged` int(11) NOT NULL,
+  `Campaign_Id` int(11) NOT NULL,
+  `User_Id` int(11) NOT NULL,
+  `Amount_pledged` int(11) NOT NULL,
   `Timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
 -- --------------------------------------------------------
 
 --
@@ -44,11 +45,12 @@ CREATE TABLE `backing` (
 CREATE TABLE `campaign` (
   `Campaign_Id` int(10) NOT NULL,
   `User_Id` int(10) NOT NULL,
-  `Title` varchar(20) NOT NULL,
+  `Title` varchar(50) NOT NULL,
   `Description` text NOT NULL,
-  `Funding Goal` int(20) NOT NULL,
-  `Campaign Duration` time NOT NULL,
-  `Image` varchar(20) NOT NULL
+  `Funding_goal` int(20) NOT NULL,
+  `Start_date` date NOT NULL,
+  `Image` varchar(20) NOT NULL,
+  `Category` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -72,8 +74,8 @@ CREATE TABLE `comment` (
 
 CREATE TABLE `profile` (
   `Profile Id` int(10) NOT NULL,
-  `User Id` int(10) NOT NULL,
-  `Profile picture` varchar(20) NOT NULL
+  `User_Id` int(10) NOT NULL,
+  `Profile_picture` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -97,13 +99,17 @@ CREATE TABLE `update` (
 
 CREATE TABLE `user` (
   `User_Id` int(10) NOT NULL,
-  `Name` varchar(30) NOT NULL,
+  `Username` varchar(7) NOT NULL,
+  `First_name` varchar(30) NOT NULL,
+  `Last_name` varchar(30) NOT NULL,
   `Email` varchar(30) NOT NULL,
   `Password` varchar(200) NOT NULL,
+  `Phone_no` int(15) NOT NULL,
+  `Birthday` date DEFAULT NULL,
   `Paymenmt detail` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
+
 -- Indexes for dumped tables
 --
 
@@ -112,15 +118,15 @@ CREATE TABLE `user` (
 --
 ALTER TABLE `backing`
   ADD PRIMARY KEY (`Backing ID`),
-  ADD KEY `Campaign Id` (`Campaign Id`),
-  ADD KEY `User Id` (`User Id`);
+  ADD KEY `backing_ibfk_1` (`Campaign_Id`),
+  ADD KEY `backing_ibfk_2` (`User_Id`);
 
 --
 -- Indexes for table `campaign`
 --
 ALTER TABLE `campaign`
   ADD PRIMARY KEY (`Campaign_Id`),
-  ADD KEY `User_Id` (`User_Id`);
+  ADD KEY `campaign_ibfk_1` (`User_Id`);
 
 --
 -- Indexes for table `comment`
@@ -133,7 +139,7 @@ ALTER TABLE `comment`
 --
 ALTER TABLE `profile`
   ADD PRIMARY KEY (`Profile Id`),
-  ADD KEY `User Id` (`User Id`);
+  ADD KEY `profile_ibfk_1` (`User_Id`);
 
 --
 -- Indexes for table `update`
@@ -156,13 +162,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `backing`
 --
 ALTER TABLE `backing`
-  MODIFY `Backing ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Backing ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `campaign`
 --
 ALTER TABLE `campaign`
-  MODIFY `Campaign_Id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `Campaign_Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `comment`
@@ -174,7 +180,7 @@ ALTER TABLE `comment`
 -- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `Profile Id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `Profile Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `update`
@@ -186,7 +192,7 @@ ALTER TABLE `update`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `User_Id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `User_Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -196,20 +202,20 @@ ALTER TABLE `user`
 -- Constraints for table `backing`
 --
 ALTER TABLE `backing`
-  ADD CONSTRAINT `backing_ibfk_1` FOREIGN KEY (`Campaign Id`) REFERENCES `backing` (`Backing ID`),
-  ADD CONSTRAINT `backing_ibfk_2` FOREIGN KEY (`User Id`) REFERENCES `backing` (`Backing ID`);
+  ADD CONSTRAINT `backing_ibfk_1` FOREIGN KEY (`Campaign_Id`) REFERENCES `campaign` (`Campaign_Id`),
+  ADD CONSTRAINT `backing_ibfk_2` FOREIGN KEY (`User_Id`) REFERENCES `user` (`User_Id`);
 
 --
 -- Constraints for table `campaign`
 --
 ALTER TABLE `campaign`
-  ADD CONSTRAINT `campaign_ibfk_1` FOREIGN KEY (`User_Id`) REFERENCES `campaign` (`Campaign_Id`);
+  ADD CONSTRAINT `campaign_ibfk_1` FOREIGN KEY (`User_Id`) REFERENCES `user` (`User_Id`);
 
 --
 -- Constraints for table `profile`
 --
 ALTER TABLE `profile`
-  ADD CONSTRAINT `profile_ibfk_1` FOREIGN KEY (`User Id`) REFERENCES `profile` (`Profile Id`);
+  ADD CONSTRAINT `profile_ibfk_1` FOREIGN KEY (`User_Id`) REFERENCES `user` (`User_Id`);
 
 --
 -- Constraints for table `update`
